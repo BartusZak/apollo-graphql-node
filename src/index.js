@@ -12,7 +12,17 @@ const schema = gql`
     me: User
     user(id: ID!): User
     users: [User!]
+
+    messages: [Message!]!
+    message(id: ID!): Message!
+
     students: [Student!]
+  }
+
+  type Message {
+    id: ID!
+    text: String!
+    user: User!
   }
 
   type Student {
@@ -23,6 +33,7 @@ const schema = gql`
   type User {
     id: ID!
     username: String!
+    messages: [Message!]
   }
 `;
 
@@ -32,12 +43,27 @@ let users = {
     username: 'Robin Wieruch',
     firstName: 'Robin',
     lastName: 'Wieruch',
+    messageIds: [1],
   },
   2: {
     id: '2',
     username: 'Dave Davids',
     firstName: 'Dave',
     lastName: 'Davids',
+    messageIds: [2],
+  },
+};
+
+let messages = {
+  1: {
+    id: '1',
+    text: 'Hello World',
+    userId: '1',
+  },
+  2: {
+    id: '2',
+    text: 'By World',
+    userId: '2',
   },
 };
 
@@ -54,12 +80,32 @@ const resolvers = {
     me: (parent, args, { me }) => {
       return me;
     },
+
+    messages: () => {
+      return Object.values(messages);
+    },
+    message: (parent, { id }) => {
+      return messages[id];
+    },
+
     students: () => {
       return studentsArray;
     },
   },
+
   User: {
     username: user => `${user.firstName} ${user.lastName}`,
+    messages: user => {
+      return Object.values(messages).filter(
+        message => message.userId === user.id,
+      );
+    },
+  },
+
+  Message: {
+    user: message => {
+      return users[message.userId];
+    },
   },
 };
 
