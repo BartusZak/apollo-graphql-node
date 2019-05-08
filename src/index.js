@@ -29,6 +29,7 @@ const server = new ApolloServer({
   context: async () => ({
     models,
     me: models.User.findByLogin('bartuszak'),
+    secret: process.env.SECRET,
   }),
 });
 
@@ -50,6 +51,8 @@ const createUsersWithMessages = async () => {
   await models.User.create(
     {
       username: 'bartuszak',
+      email: 'b.ploszynski@gmail.com',
+      password: 'Bartek123',
       messages: [
         {
           text: 'Published the Road to learn React',
@@ -64,6 +67,8 @@ const createUsersWithMessages = async () => {
   await models.User.create(
     {
       username: 'ddavids',
+      email: 'hello@robin.com',
+      password: 'rwieruch',
       messages: [
         {
           text: 'Happy to release ...',
